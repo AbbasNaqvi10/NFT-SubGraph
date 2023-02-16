@@ -41,6 +41,8 @@ type Transfer @entity(immutable: true) {
 type NFTOwner @entity {
   id: ID!
   owner: Bytes! # address
+  tokenIds: [BigInt!] # number
+  values: [BigInt!] # number 
 }
 
 type RoleAdminChanged @entity(immutable: true) {
@@ -78,7 +80,7 @@ type TransferBatch @entity(immutable: true) {
   operator: Bytes! # address
   from: Bytes! # address
   to: Bytes! # address
-  ids: [BigInt!] # uint256[]
+  tokenIds: [BigInt!] # uint256[]
   values: [BigInt!] # uint256[]
   blockNumber: BigInt!
   blockTimestamp: BigInt!

@@ -1,4 +1,4 @@
-import { Bytes } from "@graphprotocol/graph-ts";
+import { BigInt, bigInt, Bytes } from "@graphprotocol/graph-ts";
 import {
   Approval as ApprovalEvent,
   ApprovalForAll as ApprovalForAllEvent,
@@ -73,14 +73,29 @@ export function handleTransfer(event: TransferEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  
   handleNFTOwner(event);
 }
 
-export function handleNFTOwner(event: TransferEvent): void {
-  let entity = NFTOwner.load(event.params.tokenId.toString());
+function handleNFTOwner(event: TransferEvent): void {
+  let entity = NFTOwner.load(event.params.to.toString());
   if (!entity) {
-    entity = new NFTOwner(event.params.tokenId.toString());
+    entity = new NFTOwner(event.params.to.toString());
   }
-  entity.owner = event.params.to;
+  // if(entity.tokenIds){
+  //   entity.tokenIds.push(event.params.tokenId)
+  // }else{
+  //   entity.tokenIds = [event.params.tokenId]
+  // }
+  // entity.owner = event.params.to
+  // if(entity.values){
+  //   entity.values.push(BigInt.fromI64(1))
+  // }else{
+  //   entity.values = [BigInt.fromI64(1)]
+  // }
+  entity.owner = event.params.to
+  entity.tokenIds = [event.params.tokenId]
+  entity.values = [BigInt.fromI64(1)]
+
   entity.save();
 }

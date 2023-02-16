@@ -3,6 +3,10 @@
     "KidNFT": {
       "address": "0x77372a4cc66063575b05b44481F059BE356964A4",
       "startBlock": 16291002
+    },
+    "ChonkNFT": {
+      "address": "0xc805658931f959abc01133aa13ff173769133512",
+      "startBlock": 11070675
     }
   }
 }
