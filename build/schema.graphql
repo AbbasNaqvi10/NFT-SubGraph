@@ -43,65 +43,48 @@ type NFTOwner @entity {
   owner: Bytes! # address
 }
 
-type RoleAdminChanged @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  previousAdminRole: Bytes! # bytes32
-  newAdminRole: Bytes! # bytes32
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type RoleGranted @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  account: Bytes! # address
-  sender: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type RoleRevoked @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  account: Bytes! # address
-  sender: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type TransferBatch @entity(immutable: true) {
-  id: Bytes!
-  operator: Bytes! # address
-  from: Bytes! # address
-  to: Bytes! # address
-  ids: [BigInt!] # uint256[]
-  values: [BigInt!] # uint256[]
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type TransferSingle @entity(immutable: true) {
+type TransferSingle @entity {
   id: Bytes!
   operator: Bytes! # address
   from: Bytes! # address
   to: Bytes! # address
   tokenId: BigInt! # uint256
-  value: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type URI @entity(immutable: true) {
+type TransferBatch @entity {
   id: Bytes!
-  value: String! # string
-  tokenId: BigInt! # uint256
+  operator: Bytes! # address
+  from: Bytes! # address
+  to: Bytes! # address
+  ids: [BigInt!] # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+}
+
+type RoleAdminChanged @entity {
+  id: ID!
+  newRole: Bytes! # address
+  previousRole: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type RoleGranted @entity {
+  id: ID!
+  role: Bytes! # address
+  roleGrantedTo: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type RoleRevoked @entity {
+  id: ID!
+  roleRevoked: Bytes! # address
+  roleRevokedOf: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
 }

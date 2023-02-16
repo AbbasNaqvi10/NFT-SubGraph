@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: KidNFT
@@ -20,7 +20,7 @@ dataSources:
         - Transfer
       abis:
         - name: KidNFT
-          file: ./abis/KidNFT.json
+          file: KidNFT\abis\KidNFT.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,indexed uint256)
           handler: handleApproval
@@ -30,7 +30,7 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
-      file: ./src/kid-nft.ts
+      file: KidNFT\KidNFT.wasm
   - kind: ethereum
     name: ChonkNFT
     network: mainnet
@@ -43,17 +43,22 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
+        - TransferSingle
+        - TransferBatch
         - ApprovalForAll
+        - URI
         - RoleAdminChanged
         - RoleGranted
         - RoleRevoked
-        - TransferBatch
-        - TransferSingle
         - URI
       abis:
         - name: ChonkNFT
-          file: ./abis/ChonkNFT.json
+          file: ChonkNFT\abis\ChonkNFT.json
       eventHandlers:
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTransferSingle
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleTransferBatch
         - event: ApprovalForAll(indexed address,indexed address,bool)
           handler: handleApprovalForAll
         - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
@@ -62,10 +67,4 @@ dataSources:
           handler: handleRoleGranted
         - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
           handler: handleRoleRevoked
-        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
-          handler: handleTransferBatch
-        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: handleTransferSingle
-        - event: URI(string,indexed uint256)
-          handler: handleURI
-      file: ./src/chonk-nft.ts
+      file: ChonkNFT\ChonkNFT.wasm
