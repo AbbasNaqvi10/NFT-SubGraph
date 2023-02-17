@@ -38,11 +38,16 @@ type Transfer @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type NFTOwner @entity {
-  id: ID!
-  owner: Bytes! # address
-  tokenIds: [BigInt!] # number
-  values: [BigInt!] # number 
+type Nft @entity {
+  id: Bytes! # number
+  owners: [NftOwner!]!
+  value: [BigInt!]! # number 
+  transactionHash: Bytes!
+}
+
+type NftOwner @entity {
+  id: Bytes! # address
+  nft: [Nft!]!
 }
 
 type RoleAdminChanged @entity(immutable: true) {

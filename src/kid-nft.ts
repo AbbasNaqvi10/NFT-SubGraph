@@ -10,7 +10,8 @@ import {
   ApprovalForAll,
   OwnershipTransferred,
   Transfer,
-  NFTOwner,
+  Nft,
+  NftOwner
 } from "../generated/schema";
 
 export function handleApproval(event: ApprovalEvent): void {
@@ -78,24 +79,19 @@ export function handleTransfer(event: TransferEvent): void {
 }
 
 function handleNFTOwner(event: TransferEvent): void {
-  let entity = NFTOwner.load(event.params.to.toString());
-  if (!entity) {
-    entity = new NFTOwner(event.params.to.toString());
-  }
-  // if(entity.tokenIds){
-  //   entity.tokenIds.push(event.params.tokenId)
-  // }else{
-  //   entity.tokenIds = [event.params.tokenId]
-  // }
-  // entity.owner = event.params.to
-  // if(entity.values){
-  //   entity.values.push(BigInt.fromI64(1))
-  // }else{
-  //   entity.values = [BigInt.fromI64(1)]
-  // }
-  entity.owner = event.params.to
-  entity.tokenIds = [event.params.tokenId]
-  entity.values = [BigInt.fromI64(1)]
+  let entityNftOwner = NftOwner.load(event.params.to);
+  if (!entityNftOwner){
+    entityNftOwner =  new NftOwner(event.params.to);
+  } 
+  let entityNft = Nft.load(Bytes.fromBigInt(event.params.tokenId));
+  if (!entityNft){
+    entityNft =  new Nft(Bytes.fromBigInt(event.params.tokenId));
+  } 
+  entityNft.value = [BigInt.fromI64(1)];
+  entityNft.owners = [event.params.to];
+  entityNft.transactionHash = event.transaction.hash;
+  entityNftOwner.nft = [Bytes.fromBigInt(event.params.tokenId)]
 
-  entity.save();
+  entityNft.save();
+  entityNftOwner.save();
 }

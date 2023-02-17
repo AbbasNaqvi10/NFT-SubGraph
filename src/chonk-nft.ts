@@ -1,4 +1,4 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
   ApprovalForAll as ApprovalForAllEvent,
   RoleAdminChanged as RoleAdminChangedEvent,
@@ -16,7 +16,8 @@ import {
   TransferBatch,
   TransferSingle,
   URI,
-  NFTOwner,
+  Nft,
+  NftOwner
 } from "../generated/schema";
 
 export function handleApprovalForAll(event: ApprovalForAllEvent): void {
@@ -135,57 +136,59 @@ export function handleURI(event: URIEvent): void {
 }
 
 function handleNFTSingleOwner(event: TransferSingleEvent): void {
-  let entity = NFTOwner.load(event.params.to.toString());
-  if (!entity) {
-    entity = new NFTOwner(event.params.to.toString());
-  }
-  // if(entity.tokenIds){
-  //   entity.tokenIds.push(event.params.id)
-  // }
-  // else{
-  //   entity.tokenIds = [event.params.id]
-  // }
-  // entity.owner = event.params.to
-  // if(entity.values){
-  //   entity.values.push(event.params.value)
-  // }
-  // else{
-  //   entity.values = [event.params.value]
-  // }
+  let entityNftOwner = NftOwner.load(event.params.to);
+  if (!entityNftOwner){
+    entityNftOwner =  new NftOwner(event.params.to);
+  } 
+  let entityNft = Nft.load(Bytes.fromBigInt(event.params.id));
+  if (!entityNft){
+    entityNft =  new Nft(Bytes.fromBigInt(event.params.id));
+  } 
+  entityNft.value = [event.params.value];
+  entityNft.owners = [event.params.to];
+  entityNft.transactionHash = event.transaction.hash;
+  entityNftOwner.nft = [Bytes.fromBigInt(event.params.id)]
 
-  entity.tokenIds = [event.params.id];
-  entity.owner = event.params.to;
-  entity.values = [event.params.value];
-
-  entity.save();
+  entityNft.save();
+  entityNftOwner.save();
 }
 
 function handleNFTBatchOwner(event: TransferBatchEvent): void {
-  let entity = NFTOwner.load(event.params.to.toString());
-  if (!entity) {
-    entity = new NFTOwner(event.params.to.toString());
-  }
-  let tokenIds = entity.tokenIds;
-  let values = entity.values;
-  if (tokenIds === null) {        
-    tokenIds = event.params.ids;
-  } else {
-    let arr :BigInt[] = [];
-    for (let index = 0; index < tokenIds.length; index++) {
-      const element = tokenIds[index];
-      arr.push(element);
-    }
-    for (let index = 0; index < event.params.ids.length; index++) {
-      const element = event.params.ids[index];
-      arr.push(element);
-    }
-  }
-  if (values) {
-    values = values.concat(event.params.values);
-  } else {
-    values = event.params.values;
-  }
-  entity.owner = event.params.to;
-  // entity.values = event.params.values
-  entity.save();
+  let entityNftOwner = NftOwner.load(event.params.to);
+  if (!entityNftOwner){
+    entityNftOwner =  new NftOwner(event.params.to);
+  } 
+  let entityNft = Nft.load(Bytes.fromBigInt(event.params.ids.pop()));
+  if (!entityNft){
+    entityNft =  new Nft(Bytes.fromBigInt(event.params.ids.pop()));
+  } 
+  entityNft.value = event.params.values;
+  entityNft.owners = [event.params.to];
+  entityNft.transactionHash = event.transaction.hash;
+  entityNftOwner.nft = [Bytes.fromBigInt(event.params.ids.pop())]
+
+  entityNft.save();
+  entityNftOwner.save();
 }
+
+// function handleNFTBatchOwner(event: TransferBatchEvent): void {
+//   let entity = NFTOwner.load(event.params.ids[0].toString());
+//   if (!entity) {
+//     entity = new NFTOwner(event.params.ids[0].toString());
+//   }
+//   let tokenIds = entity.tokenIds;
+//   let values = entity.values;
+//   entity.transactionHash = event.transaction.hash;
+//   if (tokenIds === null) {
+//     entity.tokenIds = event.params.ids;
+//   } else {
+//     entity.tokenIds = entity.tokenIds!.concat(event.params.ids);
+//   }
+//   if (values === null) {
+//     entity.values = event.params.ids;
+//   } else {
+//     entity.values = entity.values!.concat(event.params.values);
+//   }
+//   entity.owner = event.params.to;
+//   entity.save();
+// }
