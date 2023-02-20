@@ -140,14 +140,15 @@ function handleNFTSingleOwner(event: TransferSingleEvent): void {
   if (!entityNftOwner){
     entityNftOwner =  new NftOwner(event.params.to);
   } 
-  let entityNft = Nft.load(Bytes.fromBigInt(event.params.id));
+  let entityNft = Nft.load(Bytes.fromHexString(event.params.id.toHexString()));
   if (!entityNft){
-    entityNft =  new Nft(Bytes.fromBigInt(event.params.id));
+    entityNft =  new Nft(Bytes.fromHexString(event.params.id.toHexString()));
   } 
+  entityNft.nftId = [event.params.id];
   entityNft.value = [event.params.value];
   entityNft.owners = [event.params.to];
   entityNft.transactionHash = event.transaction.hash;
-  entityNftOwner.nft = [Bytes.fromBigInt(event.params.id)]
+  entityNftOwner.nft = [Bytes.fromHexString(event.params.id.toHexString())]
 
   entityNft.save();
   entityNftOwner.save();
@@ -158,14 +159,15 @@ function handleNFTBatchOwner(event: TransferBatchEvent): void {
   if (!entityNftOwner){
     entityNftOwner =  new NftOwner(event.params.to);
   } 
-  let entityNft = Nft.load(Bytes.fromBigInt(event.params.ids.pop()));
+  let entityNft = Nft.load(Bytes.fromHexString(event.params.ids.pop().toHexString()));
   if (!entityNft){
-    entityNft =  new Nft(Bytes.fromBigInt(event.params.ids.pop()));
+    entityNft =  new Nft(Bytes.fromHexString(event.params.ids.pop().toHexString()));
   } 
+  entityNft.nftId = event.params.ids;
   entityNft.value = event.params.values;
   entityNft.owners = [event.params.to];
   entityNft.transactionHash = event.transaction.hash;
-  entityNftOwner.nft = [Bytes.fromBigInt(event.params.ids.pop())]
+  entityNftOwner.nft = [Bytes.fromHexString(event.params.ids.pop().toHexString())]
 
   entityNft.save();
   entityNftOwner.save();

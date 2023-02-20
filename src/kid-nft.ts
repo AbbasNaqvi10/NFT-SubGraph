@@ -83,14 +83,15 @@ function handleNFTOwner(event: TransferEvent): void {
   if (!entityNftOwner){
     entityNftOwner =  new NftOwner(event.params.to);
   } 
-  let entityNft = Nft.load(Bytes.fromBigInt(event.params.tokenId));
+  let entityNft = Nft.load(Bytes.fromHexString(event.params.tokenId.toHexString()));
   if (!entityNft){
-    entityNft =  new Nft(Bytes.fromBigInt(event.params.tokenId));
+    entityNft =  new Nft(Bytes.fromHexString(event.params.tokenId.toHexString()));
   } 
+  entityNft.nftId = [event.params.tokenId];
   entityNft.value = [BigInt.fromI64(1)];
   entityNft.owners = [event.params.to];
   entityNft.transactionHash = event.transaction.hash;
-  entityNftOwner.nft = [Bytes.fromBigInt(event.params.tokenId)]
+  entityNftOwner.nft = [(Bytes.fromHexString(event.params.tokenId.toHexString()))]
 
   entityNft.save();
   entityNftOwner.save();
